@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'open3'
+
+Open3.popen3("git branch -a | grep #{ARGV[0]}") do |stdin, stdout, stderr|
+  stdout.readlines.each do |branch|
+    branch.strip!
+    next if branch =~ /(master|HEAD)/
+    command = if branch =~ /^remotes\/origin\/(\w*)/
+      "git push origin :#{$1}"
+    else  
+      "git branch -D #{branch}"
+    end
+    puts command
+    `#{command}` 
+  end
+end
