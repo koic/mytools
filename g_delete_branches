@@ -2,16 +2,21 @@
 
 require 'open3'
 
-Open3.popen3("git branch -a | grep #{ARGV[0]}") do |stdin, stdout, stderr|
-  stdout.readlines.each do |branch|
-    branch.strip!
-    next if branch =~ /(master|HEAD)/
-    command = if branch =~ /^remotes\/origin\/(\w*)/
-      "git push origin :#{$1}"
-    else  
-      "git branch -D #{branch}"
+# PROTECT_BRANCHES = File.read(Pathname.new("#{ENV['HOME']}.protect_branches"))
+PROTECT_BRANCHES = ['master', 'HEAD']
+
+ARGV.each do |arg|
+  Open3.popen3("git branch -a | grep #{arg}") do |stdin, stdout, stderr|
+    stdout.readlines.each do |branch|
+      branch.strip!
+      next if branch =~ /(#{PROTECT_BRANCHES.join('|')})/
+      command = if branch =~ /^remotes\/origin\/(\w*)/
+        "git push origin :#{$1}"
+      else
+        "git branch -D #{branch}"
+      end
+      puts command
+      `#{command}`
     end
-    puts command
-    `#{command}` 
   end
 end
