@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+require 'fileutils'
+
+Dir.glob('*').each do |dir|
+  next unless File.directory?(dir)
+
+  FileUtils.cd(dir)
+  puts Dir.pwd
+  `git pull --rebase`
+  FileUtils.cd('..')
+end
+
