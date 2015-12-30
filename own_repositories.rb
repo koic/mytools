@@ -6,8 +6,7 @@
 #
 require 'shellwords'
 
-puts(cmd = ARGV[0])
-puts(cmd_arg = ARGV[1])
+puts(cmd = Shellwords.shelljoin(ARGV))
 
 repositories = %i(
   active_pstore
@@ -25,7 +24,7 @@ system('pushd .')
 repositories.each do |repository|
   puts repository
 
-  system("cd ../#{repository} && #{Shellwords.shellescape(cmd)} #{Shellwords.shellescape(cmd_arg)}")
+  system("cd ../#{repository} && #{cmd}")
 end
 
 system('popd')
