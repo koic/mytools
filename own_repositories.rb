@@ -7,6 +7,11 @@
 require 'shell'
 require 'shellwords'
 
+if ARGV.empty?
+  puts 'usage: ruby own_repositories.rb [command ...]'
+  exit!
+end
+
 puts(cmd = Shellwords.shelljoin(ARGV))
 
 repositories = %i(
